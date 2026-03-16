@@ -1,8 +1,8 @@
-import type { Device, User, ThermostatSettings, AirQuality, EnergyUsage, Occupant } from '../types';
+import type { Device, User, ThermostatSettings, AirQuality, EnergyUsage, Occupant, Scene, Room } from '../types';
 
 export const currentUser: User = {
   id: '1',
-  name: 'Raymondin Safary',
+  name: 'Раймондин Сафари',
   avatar: 'https://i.pravatar.cc/150?img=11',
   role: 'admin',
 };
@@ -10,83 +10,83 @@ export const currentUser: User = {
 export const devices: Device[] = [
   {
     id: '1',
-    name: 'Smart TV',
+    name: 'Умный телевизор',
     type: 'tv',
     status: 'active',
     powerConsumption: 120,
     lastActive: '2024-01-15T10:30:00',
     isOn: true,
-    room: 'Living Room',
+    room: 'Гостиная',
   },
   {
     id: '2',
-    name: 'Smart Speaker',
+    name: 'Умная колонка',
     type: 'speaker',
     status: 'active',
     powerConsumption: 15,
     lastActive: '2024-01-15T10:25:00',
     isOn: true,
-    room: 'Living Room',
+    room: 'Гостиная',
   },
   {
     id: '3',
-    name: 'Wi-Fi Router',
+    name: 'Маршрутизатор WiFi',
     type: 'router',
     status: 'active',
     powerConsumption: 10,
     lastActive: '2024-01-15T10:30:00',
     isOn: true,
-    room: 'Office',
+    room: 'Офис',
   },
   {
     id: '4',
-    name: 'Smart Heater',
+    name: 'Умный обогреватель',
     type: 'heater',
     status: 'inactive',
     powerConsumption: 1500,
     lastActive: '2024-01-14T22:00:00',
     isOn: false,
-    room: 'Bedroom',
+    room: 'Спальня',
   },
   {
     id: '5',
-    name: 'Smart Socket',
+    name: 'Умная розетка',
     type: 'socket',
     status: 'active',
     powerConsumption: 5,
     lastActive: '2024-01-15T10:30:00',
     isOn: true,
-    room: 'Kitchen',
+    room: 'Кухня',
   },
   {
     id: '6',
-    name: 'Smart Lamp',
+    name: 'Умная лампа',
     type: 'lamp',
     status: 'active',
     powerConsumption: 12,
     lastActive: '2024-01-15T10:28:00',
     isOn: true,
-    room: 'Living Room',
+    room: 'Гостиная',
   },
   {
     id: '7',
-    name: 'Kitchen TV',
+    name: 'ТВ на кухне',
     type: 'tv',
     status: 'inactive',
     powerConsumption: 80,
     lastActive: '2024-01-15T08:00:00',
     isOn: false,
-    room: 'Kitchen',
+    room: 'Кухня',
   },
   {
     id: '8',
-    name: 'Bedroom Speaker',
+    name: 'Колонка в спальне',
     type: 'speaker',
     status: 'inactive',
     powerConsumption: 10,
     lastActive: '2024-01-15T07:00:00',
     isOn: false,
-    room: 'Bedroom',
+    room: 'Спальня',
   },
 ];
 
@@ -158,4 +158,135 @@ export const powerConsumptionData = [
   { name: 'Lighting', power: 120, icon: 'lightbulb' },
   { name: 'Television', power: 200, icon: 'tv' },
   { name: 'Smart Speakers', power: 25, icon: 'speaker' },
+];
+
+export const scenes: Scene[] = [
+  {
+    id: 'morning',
+    name: 'Утро',
+    icon: '🌅',
+    devices: [
+      { deviceId: '1', state: 'on' },
+      { deviceId: '5', state: 'on' },
+      { deviceId: '6', state: 'on' },
+    ],
+    description: 'Режим пробуждения - свет, кофе'
+  },
+  {
+    id: 'evening',
+    name: 'Вечер',
+    icon: '🌙',
+    devices: [
+      { deviceId: '1', state: 'on' },
+      { deviceId: '2', state: 'on' },
+      { deviceId: '6', state: 'on' },
+    ],
+    description: 'Режим отдыха - теплый свет, музыка'
+  },
+  {
+    id: 'movie',
+    name: 'Кино',
+    icon: '🎬',
+    devices: [
+      { deviceId: '1', state: 'on' },
+      { deviceId: '7', state: 'on' },
+      { deviceId: '5', state: 'off' },
+    ],
+    description: 'Режим кино - TV включен, свет приглушен'
+  },
+  {
+    id: 'away',
+    name: 'Уход',
+    icon: '🏠',
+    devices: [
+      { deviceId: '1', state: 'off' },
+      { deviceId: '2', state: 'off' },
+      { deviceId: '3', state: 'on' },
+      { deviceId: '5', state: 'off' },
+      { deviceId: '6', state: 'off' },
+      { deviceId: '7', state: 'off' },
+      { deviceId: '8', state: 'off' },
+    ],
+    description: 'Все устройства выключены кроме безопасности'
+  },
+  {
+    id: 'sleep',
+    name: 'Сон',
+    icon: '😴',
+    devices: [
+      { deviceId: '2', state: 'off' },
+      { deviceId: '3', state: 'on' },
+      { deviceId: '5', state: 'off' },
+      { deviceId: '6', state: 'off' },
+    ],
+    description: 'Ночной режим - минимальное освещение'
+  },
+  {
+    id: 'workout',
+    name: 'Спорт',
+    icon: '💪',
+    devices: [
+      { deviceId: '1', state: 'off' },
+      { deviceId: '2', state: 'on' },
+      { deviceId: '5', state: 'on' },
+    ],
+    description: 'Активный режим - музыка и свет'
+  },
+  {
+    id: 'reading',
+    name: 'Чтение',
+    icon: '📚',
+    devices: [
+      { deviceId: '6', state: 'on' },
+      { deviceId: '2', state: 'on' },
+    ],
+    description: 'Режим фокуса - чтение и музыка'
+  },
+];
+
+export const rooms: Room[] = [
+  {
+    id: 'living-room',
+    name: 'Living Room',
+    icon: '🛋️',
+    devices: [
+      { id: '1', name: 'Smart TV', type: 'tv', status: 'active', powerConsumption: 120, lastActive: '2024-01-15T10:30:00', isOn: true, room: 'Living Room' },
+      { id: '2', name: 'Smart Speaker', type: 'speaker', status: 'active', powerConsumption: 15, lastActive: '2024-01-15T10:25:00', isOn: true, room: 'Living Room' },
+      { id: '6', name: 'Smart Lamp', type: 'lamp', status: 'active', powerConsumption: 12, lastActive: '2024-01-15T10:28:00', isOn: true, room: 'Living Room' },
+    ],
+    temperature: 22.5,
+    humidity: 45,
+  },
+  {
+    id: 'kitchen',
+    name: 'Kitchen',
+    icon: '🍳',
+    devices: [
+      { id: '5', name: 'Smart Socket', type: 'socket', status: 'active', powerConsumption: 5, lastActive: '2024-01-15T10:30:00', isOn: true, room: 'Kitchen' },
+      { id: '7', name: 'Kitchen TV', type: 'tv', status: 'inactive', powerConsumption: 80, lastActive: '2024-01-15T08:00:00', isOn: false, room: 'Kitchen' },
+    ],
+    temperature: 24.0,
+    humidity: 50,
+  },
+  {
+    id: 'bedroom',
+    name: 'Bedroom',
+    icon: '🛏️',
+    devices: [
+      { id: '4', name: 'Smart Heater', type: 'heater', status: 'inactive', powerConsumption: 1500, lastActive: '2024-01-14T22:00:00', isOn: false, room: 'Bedroom' },
+      { id: '8', name: 'Bedroom Speaker', type: 'speaker', status: 'inactive', powerConsumption: 10, lastActive: '2024-01-15T07:00:00', isOn: false, room: 'Bedroom' },
+    ],
+    temperature: 20.0,
+    humidity: 40,
+  },
+  {
+    id: 'office',
+    name: 'Office',
+    icon: '🖥️',
+    devices: [
+      { id: '3', name: 'Wi-Fi Router', type: 'router', status: 'active', powerConsumption: 10, lastActive: '2024-01-15T10:30:00', isOn: true, room: 'Office' },
+    ],
+    temperature: 21.5,
+    humidity: 42,
+  },
 ];

@@ -4,7 +4,91 @@
 
 @layer base {
   body {
-    @apply bg-primary-50 text-primary-800 font-sans antialiased;
+    @apply bg-gradient-to-br from-primary-50 via-white to-secondary-50 text-primary-800 font-sans antialiased;
+    overflow-x: hidden;
+  }
+}
+
+/* 10-inch screen optimization */
+@media (max-width: 1024px) {
+  body {
+    font-size: 14px;
+  }
+  
+  /* Reduce padding and spacing */
+  .main-content {
+    padding: 0.5rem !important;
+  }
+  
+  /* Adjust grid */
+  .grid-cols-12 {
+    grid-template-columns: repeat(6, 1fr) !important;
+  }
+  
+  /* Reduce card sizes */
+  .glass-card {
+    padding: 0.75rem !important;
+  }
+  
+  /* Adjust sidebar */
+  .sidebar {
+    width: 16rem !important;
+  }
+  
+  .main-content {
+    margin-left: 16rem !important;
+  }
+  
+  /* Reduce font sizes */
+  h1 {
+    font-size: 1.25rem !important;
+  }
+  
+  h2 {
+    font-size: 1.125rem !important;
+  }
+  
+  p {
+    font-size: 0.875rem !important;
+  }
+  
+  /* Reduce icon sizes */
+  .icon-sm {
+    width: 1rem !important;
+    height: 1rem !important;
+  }
+  
+  .icon-md {
+    width: 1.25rem !important;
+    height: 1.25rem !important;
+  }
+  
+  .icon-lg {
+    width: 1.5rem !important;
+    height: 1.5rem !important;
+  }
+}
+
+/* 7-inch screen optimization */
+@media (max-width: 800px) {
+  body {
+    font-size: 12px;
+  }
+  
+  .grid-cols-12 {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+  
+  .sidebar {
+    width: 14rem !important;
+  }
+  
+  .main-content {
+    margin-left: 14rem !important;
+  }
+  
+  .glass-card {
+    padding: 0.5rem !important;
   }
 }
 
@@ -46,4 +130,32 @@
 
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+/* Glassmorphism effect */
+.glass-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+}
+
+.glass-card-dark {
+  background: rgba(30, 41, 59, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }

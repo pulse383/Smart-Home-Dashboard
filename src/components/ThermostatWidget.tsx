@@ -1,49 +1,63 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Thermometer, Droplets, Sun, CloudRain, Fan } from 'lucide-react';
-import type { ThermostatSettings } from '../types';
+import type { ThermostatData } from '../types';
 import { cn } from '../lib/utils';
 
 interface ThermostatWidgetProps {
-  settings: ThermostatSettings;
-  onSettingsChange: (settings: ThermostatSettings) => void;
+  data: ThermostatData;
+  onSettingsChange?: (data: ThermostatData) => void;
 }
 
 const modes = [
-  { id: 'cool', icon: CloudRain, label: 'Cool', color: 'text-blue-500' },
-  { id: 'heat', icon: Sun, label: 'Heat', color: 'text-orange-500' },
-  { id: 'auto', icon: Thermometer, label: 'Auto', color: 'text-green-500' },
-  { id: 'fan', icon: Fan, label: 'Fan', color: 'text-purple-500' },
+  { id: 'cool', icon: CloudRain, label: 'Охлаждение', color: 'text-blue-500' },
+  { id: 'heat', icon: Sun, label: 'Обогрев', color: 'text-orange-500' },
+  { id: 'auto', icon: Thermometer, label: 'Авто', color: 'text-green-500' },
+  { id: 'fan', icon: Fan, label: 'Вентиляция', color: 'text-purple-500' },
 ] as const;
 
 const fanSpeeds = ['low', 'medium', 'high'] as const;
 
 export const ThermostatWidget: React.FC<ThermostatWidgetProps> = ({
-  settings,
+  data,
   onSettingsChange,
 }) => {
+  console.log('[ThermostatWidget] Rendering with data:', data);
+
+  if (!data) {
+    console.warn('[ThermostatWidget] Thermostat data is null or undefined');
+    return (
+      <div className="bg-white rounded-3xl p-6 shadow-md border border-gray-100">
+        <p className="text-gray-500">Нет данных термостата</p>
+      </div>
+    );
+  }
 
   const handleTempChange = (direction: 'up' | 'down') => {
-    const newTemp = direction === 'up' 
-      ? Math.min(settings.targetTemp + 1, 30)
-      : Math.max(settings.targetTemp - 1, 16);
-    onSettingsChange({ ...settings, targetTemp: newTemp });
+    if (!onSettingsChange) return;
+    const newTemp = direction === 'up'
+      ? Math.min(data.targetTemp + 1, 30)
+      : Math.max(data.targetTemp - 1, 16);
+    onSettingsChange({ ...data, targetTemp: newTemp });
   };
 
   const handleModeChange = (mode: typeof modes[number]['id']) => {
-    onSettingsChange({ ...settings, mode });
+    if (!onSettingsChange) return;
+    onSettingsChange({ ...data, mode });
   };
 
   const handleFanSpeedChange = (speed: typeof fanSpeeds[number]) => {
-    onSettingsChange({ ...settings, fanSpeed: speed });
+    if (!onSettingsChange) return;
+    onSettingsChange({ ...data, fanSpeed: speed });
   };
 
   const togglePower = () => {
-    onSettingsChange({ ...settings, isOn: !settings.isOn });
+    if (!onSettingsChange) return;
+    onSettingsChange({ ...data, isOn: !data.isOn });
   };
 
   // Calculate progress for circular display (16-30 range)
-  const progress = ((settings.targetTemp - 16) / 14) * 100;
+  const progress = ((data.targetTemp - 16) / 14) * 100;
   const circumference = 2 * Math.PI * 90;
   const strokeDashoffset = circumference - (progress / 100) * circumference;
 
@@ -54,18 +68,18 @@ export const ThermostatWidget: React.FC<ThermostatWidgetProps> = ({
       className="bg-white rounded-2xl p-6 shadow-sm border border-secondary-100"
     >
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-lg font-semibold text-secondary-900">Thermostat</h2>
+        <h2 className="text-lg font-semibold text-secondary-900">Термостат</h2>
         <motion.button
           whileTap={{ scale: 0.95 }}
           onClick={togglePower}
           className={cn(
             "px-4 py-1.5 rounded-full text-sm font-medium transition-colors",
-            settings.isOn 
-              ? "bg-green-100 text-green-600" 
+            data.isOn
+              ? "bg-green-100 text-green-600"
               : "bg-secondary-100 text-secondary-500"
           )}
         >
-          {settings.isOn ? 'ON' : 'OFF'}
+          {data.isOn ? 'ВКЛ' : 'ВЫКЛ'}
         </motion.button>
       </div>
 
@@ -87,7 +101,7 @@ export const ThermostatWidget: React.FC<ThermostatWidgetProps> = ({
             cy="104"
             r="90"
             fill="none"
-            stroke={settings.isOn ? "#0ea5e9" : "#cbd5e1"}
+            stroke={data.isOn ? "#0ea5e9" : "#cbd5e1"}
             strokeWidth="8"
             strokeLinecap="round"
             strokeDasharray={circumference}
@@ -96,16 +110,16 @@ export const ThermostatWidget: React.FC<ThermostatWidgetProps> = ({
             transition={{ duration: 0.5, ease: "easeOut" }}
           />
         </svg>
-        
+
         {/* Temperature Display */}
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <span className={cn(
             "text-5xl font-bold",
-            settings.isOn ? "text-secondary-900" : "text-secondary-300"
+            data.isOn ? "text-secondary-900" : "text-secondary-300"
           )}>
-            {settings.targetTemp}°
+            {data.targetTemp}°
           </span>
-          <span className="text-sm text-secondary-500 mt-1">Target</span>
+          <span className="text-sm text-secondary-500 mt-1">Цель</span>
         </div>
       </div>
 
@@ -119,17 +133,17 @@ export const ThermostatWidget: React.FC<ThermostatWidgetProps> = ({
         >
           <span className="text-2xl text-secondary-600">−</span>
         </motion.button>
-        
+
         <div className="text-center">
-          <p className="text-sm text-secondary-500">Current</p>
+          <p className="text-sm text-secondary-500">Сейчас</p>
           <p className={cn(
             "text-2xl font-semibold",
-            settings.isOn ? "text-secondary-900" : "text-secondary-300"
+            data.isOn ? "text-secondary-900" : "text-secondary-300"
           )}>
-            {settings.temperature}°C
+            {data.temperature}°C
           </p>
         </div>
-        
+
         <motion.button
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
@@ -142,12 +156,12 @@ export const ThermostatWidget: React.FC<ThermostatWidgetProps> = ({
 
       {/* Mode Selection */}
       <div className="mb-4">
-        <p className="text-sm text-secondary-500 mb-2">Mode</p>
+        <p className="text-sm text-secondary-500 mb-2">Режим</p>
         <div className="grid grid-cols-4 gap-2">
           {modes.map((mode) => {
             const Icon = mode.icon;
-            const isActive = settings.mode === mode.id && settings.isOn;
-            
+            const isActive = data.mode === mode.id && data.isOn;
+
             return (
               <motion.button
                 key={mode.id}
@@ -156,8 +170,8 @@ export const ThermostatWidget: React.FC<ThermostatWidgetProps> = ({
                 onClick={() => handleModeChange(mode.id)}
                 className={cn(
                   "flex flex-col items-center gap-1 p-3 rounded-xl transition-all",
-                  isActive 
-                    ? "bg-primary-50 border-2 border-primary-200" 
+                  isActive
+                    ? "bg-primary-50 border-2 border-primary-200"
                     : "bg-secondary-50 border-2 border-transparent hover:bg-secondary-100"
                 )}
               >
@@ -180,14 +194,14 @@ export const ThermostatWidget: React.FC<ThermostatWidgetProps> = ({
       {/* Fan Speed */}
       <div className="mb-4">
         <div className="flex items-center justify-between mb-2">
-          <p className="text-sm text-secondary-500">Fan Speed</p>
+          <p className="text-sm text-secondary-500">Скорость вентилятора</p>
           <div className="flex items-center gap-2">
             <Fan className={cn(
               "w-4 h-4",
-              settings.isOn ? "text-primary-500" : "text-secondary-400"
+              data.isOn ? "text-primary-500" : "text-secondary-400"
             )} />
             <span className="text-sm font-medium text-secondary-700 capitalize">
-              {settings.fanSpeed}
+              {data.fanSpeed}
             </span>
           </div>
         </div>
@@ -199,7 +213,7 @@ export const ThermostatWidget: React.FC<ThermostatWidgetProps> = ({
               onClick={() => handleFanSpeedChange(speed)}
               className={cn(
                 "flex-1 py-2 rounded-lg text-sm font-medium transition-colors capitalize",
-                settings.fanSpeed === speed && settings.isOn
+                data.fanSpeed === speed && data.isOn
                   ? "bg-primary-500 text-white"
                   : "bg-secondary-100 text-secondary-600 hover:bg-secondary-200"
               )}
@@ -214,9 +228,9 @@ export const ThermostatWidget: React.FC<ThermostatWidgetProps> = ({
       <div className="flex items-center justify-between p-3 bg-secondary-50 rounded-xl">
         <div className="flex items-center gap-2">
           <Droplets className="w-5 h-5 text-blue-500" />
-          <span className="text-sm text-secondary-600">Humidity</span>
+          <span className="text-sm text-secondary-600">Влажность</span>
         </div>
-        <span className="font-semibold text-secondary-900">{settings.humidity}%</span>
+        <span className="font-semibold text-secondary-900">{data.humidity}%</span>
       </div>
     </motion.div>
   );

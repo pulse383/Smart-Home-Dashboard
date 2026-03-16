@@ -30,11 +30,22 @@ const colorMap: Record<string, { bg: string; icon: string; active: string }> = {
   lamp: { bg: 'bg-amber-50', icon: 'text-amber-500', active: 'bg-amber-500' },
 };
 
-export const DeviceCard: React.FC<DeviceCardProps> = ({ 
-  device, 
+export const DeviceCard: React.FC<DeviceCardProps> = ({
+  device,
   onToggle,
-  index = 0 
+  index = 0
 }) => {
+  console.log('[DeviceCard] Rendering device:', device);
+
+  if (!device) {
+    console.warn('[DeviceCard] Device is null or undefined');
+    return (
+      <div className="bg-white rounded-2xl p-5 shadow-sm border border-secondary-100">
+        <p className="text-gray-500 text-center py-4">Нет данных об устройстве</p>
+      </div>
+    );
+  }
+
   const Icon = iconMap[device.type] || Plug;
   const colors = colorMap[device.type] || colorMap.socket;
 
