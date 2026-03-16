@@ -18,10 +18,10 @@ export function useHomeAssistantData(options: UseHomeAssistantDataOptions = {}) 
   });
 
   const [zoneData, setZoneData] = useState<ZoneData[]>([
-    { id: 'living_room', name: 'Living Room', entities: [] },
-    { id: 'bedroom', name: 'Bedroom', entities: [] },
-    { id: 'kitchen', name: 'Kitchen', entities: [] },
-    { id: 'hallway', name: 'Hallway', entities: [] },
+    { id: 'living_room', name: 'Living Room', entities: [], temperature: 21, humidity: 45, isOccupied: true },
+    { id: 'bedroom', name: 'Bedroom', entities: [], temperature: 20, humidity: 40, isOccupied: false },
+    { id: 'kitchen', name: 'Kitchen', entities: [], temperature: 23, humidity: 48, isOccupied: true },
+    { id: 'hallway', name: 'Hallway', entities: [], temperature: 22, humidity: 43, isOccupied: false },
   ]);
 
   const [weatherData, setWeatherData] = useState<WeatherData>({
@@ -88,7 +88,22 @@ export function useHomeAssistantData(options: UseHomeAssistantDataOptions = {}) 
     try {
       console.log('[fetchAirQuality] Получение качества воздуха...');
       const quality = await getAirQuality();
-      setAirQuality(quality);
+      if (quality) {
+        const allowedLevels: AirQuality['level'][] = ['good', 'moderate', 'poor', 'hazardous'];
+        const normalizedLevel = allowedLevels.includes(quality.level as AirQuality['level'])
+          ? (quality.level as AirQuality['level'])
+          : 'moderate';
+        setAirQuality({
+          aqi: quality.aqi,
+          pm25: quality.pm25,
+          pm10: quality.pm10,
+          co2: quality.co2,
+          level: normalizedLevel,
+          voc: typeof (quality as any).voc === 'number' ? (quality as any).voc : undefined,
+        });
+      } else {
+        setAirQuality(null);
+      }
       console.log('[fetchAirQuality] Качество воздуха получено:', quality);
     } catch (error) {
       console.error('[fetchAirQuality] Ошибка при получении качества воздуха:', error);
@@ -130,7 +145,7 @@ export function useHomeAssistantData(options: UseHomeAssistantDataOptions = {}) 
           ...prev,
           temperature: parseFloat(climateState.attributes?.current_temperature) || prev.temperature,
           targetTemp: parseFloat(climateState.attributes?.temperature) || prev.targetTemp,
-          humidity: parseFloat(humidityState?.state) || prev.humidity,
+          humidity: humidityState ? parseFloat(humidityState.state) || prev.humidity : prev.humidity,
           isOn: climateState.state === 'heat' || climateState.state === 'cool' || climateState.state === 'auto',
           mode: climateState.attributes?.hvac_mode || 'auto',
           fanSpeed: 'medium',
@@ -152,29 +167,79 @@ export function useHomeAssistantData(options: UseHomeAssistantDataOptions = {}) 
 
   const fetchZoneData = async () => {
     try {
-      const states = await getHomeAssistantStates([
+      const primarySensors = await getHomeAssistantStates([
         'sensor.living_room_temp',
         'sensor.bedroom_temp',
         'sensor.kitchen_temp',
         'sensor.hallway_temp',
+        'sensor.living_room_humidity',
+        'sensor.bedroom_humidity',
+        'sensor.kitchen_humidity',
+        'sensor.hallway_humidity',
       ]);
 
-      const zones = [
-        { id: 'living_room', name: 'Living Room', entity: 'sensor.living_room_temp' },
-        { id: 'bedroom', name: 'Bedroom', entity: 'sensor.bedroom_temp' },
-        { id: 'kitchen', name: 'Kitchen', entity: 'sensor.kitchen_temp' },
-        { id: 'hallway', name: 'Hallway', entity: 'sensor.hallway_temp' },
+      const zoneEntities = await getHomeAssistantStates([
+        'light.living_room_main',
+        'switch.living_room_tv',
+        'sensor.living_room_presence',
+        'light.bedroom_main',
+        'switch.bedroom_led',
+        'sensor.bedroom_presence',
+        'light.kitchen_ceiling',
+        'switch.kitchen_hood',
+        'sensor.kitchen_moisture',
+        'light.hallway_ceiling',
+        'sensor.hallway_presence',
+      ]);
+
+      const zoneMappings = [
+        {
+          id: 'living_room',
+          name: 'Living Room',
+          sensors: ['sensor.living_room_temp'],
+          humidityEntity: 'sensor.living_room_humidity',
+          entities: ['light.living_room_main', 'switch.living_room_tv', 'sensor.living_room_presence'],
+        },
+        {
+          id: 'bedroom',
+          name: 'Bedroom',
+          sensors: ['sensor.bedroom_temp'],
+          humidityEntity: 'sensor.bedroom_humidity',
+          entities: ['light.bedroom_main', 'switch.bedroom_led', 'sensor.bedroom_presence'],
+        },
+        {
+          id: 'kitchen',
+          name: 'Kitchen',
+          sensors: ['sensor.kitchen_temp'],
+          humidityEntity: 'sensor.kitchen_humidity',
+          entities: ['light.kitchen_ceiling', 'switch.kitchen_hood', 'sensor.kitchen_moisture'],
+        },
+        {
+          id: 'hallway',
+          name: 'Hallway',
+          sensors: ['sensor.hallway_temp'],
+          humidityEntity: 'sensor.hallway_humidity',
+          entities: ['light.hallway_ceiling', 'sensor.hallway_presence'],
+        },
       ];
 
-      const zoneList = zones.map(zone => {
-        const state = states.find((s: HomeAssistantState) => s.entity_id === zone.entity);
+      const zoneList = zoneMappings.map(zone => {
+        const tempState = primarySensors.find((s: HomeAssistantState) => zone.sensors.includes(s.entity_id));
+        const humidityState = primarySensors.find((s: HomeAssistantState) => s.entity_id === zone.humidityEntity);
+        const humidityValue = humidityState ? parseFloat(humidityState.state) : tempState?.attributes?.humidity;
         return {
           id: zone.id,
           name: zone.name,
-          entities: [],
-          temperature: state ? parseFloat(state.state) : 20,
-          humidity: 45,
-          isOccupied: false,
+          entities: zoneEntities
+            .filter((state: HomeAssistantState) => zone.entities.includes(state.entity_id))
+            .map(entity => ({
+              entity_id: entity.entity_id,
+              state: entity.state,
+              attributes: entity.attributes,
+            })),
+          temperature: tempState ? parseFloat(tempState.state) : 20,
+          humidity: humidityValue ? Number(humidityValue) : 45,
+          isOccupied: Boolean(tempState?.attributes?.occupancy) ?? false,
         };
       });
 

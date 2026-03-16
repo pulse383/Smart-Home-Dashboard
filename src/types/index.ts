@@ -74,6 +74,9 @@ export interface ZoneData {
   entities: HomeAssistantState[];
   devices?: Device[];
   icon?: string;
+  temperature?: number;
+  humidity?: number;
+  isOccupied?: boolean;
 }
 
 export interface WeatherData {

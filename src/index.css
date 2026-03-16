@@ -1,10 +1,13 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   body {
-    @apply bg-gradient-to-br from-primary-50 via-white to-secondary-50 text-primary-800 font-sans antialiased;
+    font-family: 'Poppins', 'Segoe UI', system-ui, sans-serif;
+    @apply bg-gradient-to-br from-primary-50 via-white to-secondary-50 text-primary-800 antialiased;
     overflow-x: hidden;
   }
 }

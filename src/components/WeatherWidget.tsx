@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { motion } from 'framer-motion';
 import { Cloud, Sun, CloudRain, Snowflake, Wind, Thermometer } from 'lucide-react';
 import { cn } from '../lib/utils';
@@ -60,8 +60,8 @@ export const WeatherWidget: React.FC<WeatherWidgetProps> = ({ weather }) => {
   if (!weather) {
     console.warn('[WeatherWidget] Weather data is null or undefined');
     return (
-      <div className="bg-white rounded-3xl p-6 shadow-md border border-gray-100">
-        <p className="text-gray-500">Нет данных о погоде</p>
+      <div className="bg-white rounded-2xl p-3 shadow-md border border-gray-100 w-[280px] h-[240px] flex items-center justify-center">
+        <p className="text-gray-500 text-xs">Нет данных о погоде</p>
       </div>
     );
   }
@@ -72,8 +72,8 @@ export const WeatherWidget: React.FC<WeatherWidgetProps> = ({ weather }) => {
   if (!config) {
     console.warn('[WeatherWidget] Unknown weather condition:', weather.condition);
     return (
-      <div className="bg-white rounded-3xl p-6 shadow-md border border-gray-100">
-        <p className="text-gray-500">Неизвестные погодные условия</p>
+      <div className="bg-white rounded-2xl p-3 shadow-md border border-gray-100 w-[280px] h-[240px] flex items-center justify-center">
+        <p className="text-gray-500 text-xs">Неизвестные погодные условия</p>
       </div>
     );
   }
@@ -82,7 +82,7 @@ export const WeatherWidget: React.FC<WeatherWidgetProps> = ({ weather }) => {
     <motion.div
       initial={{ opacity: 0, y: 20, scale: 0.45 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
-      className="bg-gradient-to-br from-primary-500/10 to-accent-500/10 backdrop-blur-sm rounded-3xl p-6 shadow-2xl border border-white/20 overflow-hidden relative"
+      className="bg-gradient-to-br from-primary-500/10 to-accent-500/10 backdrop-blur-sm rounded-2xl p-3 shadow-lg border border-white/20 overflow-hidden relative w-[280px] h-[240px] flex-shrink-0"
     >
       {/* Animated Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -93,9 +93,9 @@ export const WeatherWidget: React.FC<WeatherWidgetProps> = ({ weather }) => {
           transition={{
             duration: 20,
             repeat: Infinity,
-            ease: "linear"
+            ease: 'linear'
           }}
-          className="absolute -top-20 -right-20 w-60 h-60 bg-primary-500/10 rounded-full blur-3xl"
+          className="absolute -top-12 -right-12 w-28 h-28 bg-primary-500/10 rounded-full blur-3xl"
         />
         <motion.div
           animate={{
@@ -104,114 +104,90 @@ export const WeatherWidget: React.FC<WeatherWidgetProps> = ({ weather }) => {
           transition={{
             duration: 25,
             repeat: Infinity,
-            ease: "linear"
+            ease: 'linear'
           }}
-          className="absolute -bottom-20 -left-20 w-72 h-72 bg-accent-500/10 rounded-full blur-3xl"
+          className="absolute -bottom-12 -left-12 w-32 h-32 bg-accent-500/10 rounded-full blur-3xl"
         />
       </div>
 
-      <div className="relative z-10">
+      <div className="relative z-10 h-full flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-2">
           <div>
-            <h2 className="text-lg font-semibold text-secondary-900">Погода</h2>
-            <p className="text-sm text-secondary-500">{weather.location}</p>
+            <h2 className="text-sm font-semibold text-secondary-900">Погода</h2>
+            <p className="text-[10px] text-secondary-500 truncate max-w-[150px]">{weather.location}</p>
           </div>
           <motion.div
             animate={{ rotate: 360 }}
-            transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-            className="w-12 h-12 bg-white/50 rounded-full flex items-center justify-center backdrop-blur-sm"
+            transition={{ duration: 30, repeat: Infinity, ease: 'linear' }}
+            className="w-7 h-7 bg-white/50 rounded-full flex items-center justify-center backdrop-blur-sm"
           >
-            <Icon className={cn("w-6 h-6", config.color)} />
+            <Icon className={cn('w-4 h-4', config.color)} />
           </motion.div>
         </div>
 
         {/* Temperature Display */}
-        <div className="flex items-center justify-center mb-6">
+        <div className="flex items-center justify-center mb-2">
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            transition={{ type: "spring", stiffness: 100, damping: 20 }}
+            transition={{ type: 'spring', stiffness: 100, damping: 20 }}
             className="relative"
           >
-            <Thermometer className="absolute -left-8 top-1/2 -translate-y-1/2 w-8 h-8 text-primary-500" />
-            <div className="flex items-end gap-2">
+            <Thermometer className="absolute -left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-primary-500" />
+            <div className="flex items-end gap-1">
               <motion.span
-                animate={{ y: [0, -5, 0] }}
+                animate={{ y: [0, -3, 0] }}
                 transition={{ duration: 2, repeat: Infinity }}
-                className="text-7xl font-bold bg-gradient-to-r from-primary-500 to-accent-500 bg-clip-text text-transparent"
+                className="text-4xl font-bold bg-gradient-to-r from-primary-500 to-accent-500 bg-clip-text text-transparent"
               >
                 {weather.temperature}°
               </motion.span>
-              <span className="text-2xl text-secondary-400 mb-2">C</span>
+              <span className="text-sm text-secondary-400 mb-1">C</span>
             </div>
           </motion.div>
         </div>
 
         {/* Condition */}
-        <div className="text-center mb-6">
+        <div className="text-center mb-2">
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
-            className="text-xl font-semibold text-secondary-900"
+            className="text-sm font-semibold text-secondary-900"
           >
             {config.label}
           </motion.p>
-          <p className="text-sm text-secondary-500">Ощущается как {weather.feelsLike}°C</p>
+          <p className="text-[10px] text-secondary-500">Ощущается как {weather.feelsLike}°C</p>
         </div>
 
         {/* Weather Details */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-2 mt-auto">
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
+            initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.4 }}
-            className="bg-white/50 backdrop-blur-sm rounded-2xl p-4 text-center"
+            className="bg-white/50 backdrop-blur-sm rounded-lg p-2 text-center"
           >
-            <div className="flex items-center justify-center gap-2 mb-2">
-              <Cloud className="w-5 h-5 text-primary-500" />
-              <span className="text-xs text-secondary-500">Влажность</span>
+            <div className="flex items-center justify-center gap-1 mb-1">
+              <Cloud className="w-3 h-3 text-primary-500" />
+              <span className="text-[9px] text-secondary-500">Влажность</span>
             </div>
-            <p className="text-2xl font-bold text-secondary-900">{weather.humidity}%</p>
+            <p className="text-sm font-bold text-secondary-900">{weather.humidity}%</p>
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, x: 20 }}
+            initial={{ opacity: 0, x: 10 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.5 }}
-            className="bg-white/50 backdrop-blur-sm rounded-2xl p-4 text-center"
+            className="bg-white/50 backdrop-blur-sm rounded-lg p-2 text-center"
           >
-            <div className="flex items-center justify-center gap-2 mb-2">
-              <Wind className="w-5 h-5 text-primary-500" />
-              <span className="text-xs text-secondary-500">Ветер</span>
+            <div className="flex items-center justify-center gap-1 mb-1">
+              <Wind className="w-3 h-3 text-primary-500" />
+              <span className="text-[9px] text-secondary-500">Ветер</span>
             </div>
-            <p className="text-2xl font-bold text-secondary-900">{weather.windSpeed} м/с</p>
+            <p className="text-sm font-bold text-secondary-900">{weather.windSpeed} м/с</p>
           </motion.div>
-        </div>
-
-        {/* Hourly Forecast */}
-        <div className="mt-6 pt-6 border-t border-white/20">
-          <h3 className="text-sm font-semibold text-secondary-900 mb-4">Прогноз на час</h3>
-          <div className="flex gap-4 overflow-x-auto scrollbar-hide">
-            {[1, 2, 3, 4, 5].map((hour, index) => (
-              <motion.div
-                key={hour}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.6 + index * 0.1 }}
-                className="flex-shrink-0 bg-white/50 backdrop-blur-sm rounded-2xl p-3 text-center min-w-[70px]"
-              >
-                <p className="text-xs text-secondary-500 mb-2">{hour}:00</p>
-                <div className="w-10 h-10 mx-auto mb-2 bg-gradient-to-br from-primary-500/20 to-accent-500/20 rounded-full flex items-center justify-center">
-                  <Sun className="w-5 h-5 text-orange-500" />
-                </div>
-                <p className="text-sm font-semibold text-secondary-900">
-                  {weather.temperature + (index * 2)}°
-                </p>
-              </motion.div>
-            ))}
-          </div>
         </div>
       </div>
     </motion.div>
