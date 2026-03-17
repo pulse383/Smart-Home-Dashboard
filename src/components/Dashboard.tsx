@@ -70,7 +70,7 @@ const zoneIcons: Record<string, string> = {
   kukhnia: '🍽️',
 };
 
-const sceneChip = (label: string, tone: SceneTone = 'neutral') =>
+const sceneChip = (_label: string, tone: SceneTone = 'neutral') =>
   `inline-flex items-center gap-1 px-3 py-1 rounded-full border bg-white/90 shadow-sm text-[11px] uppercase tracking-[0.18em] ${
     tone === 'warm'
       ? 'border-amber-200 text-amber-700'
@@ -155,25 +155,6 @@ const SummaryBadge: React.FC<{ label: string; value: string; unit?: string }> = 
     <p className="text-[11px] uppercase tracking-[0.2em] text-slate-500">{label}</p>
     <p className="text-3xl font-semibold text-slate-900">{value}</p>
     {unit && <p className="text-xs text-slate-400">{unit}</p>}
-  </div>
-);
-
-const SystemsInfo = () => (
-  <div className="grid grid-cols-2 gap-3 text-sm text-slate-200">
-    <div className="glass-panel rounded-2xl border border-white/5 p-4">
-      <p className="text-[10px] uppercase tracking-[0.2em] text-slate-500 flex items-center gap-1">
-        <ServerCog size={14} /> NAS Core
-      </p>
-      <p className="text-2xl font-semibold text-slate-900">28%</p>
-      <p className="text-xs text-slate-400">Нагрузка CPU</p>
-    </div>
-    <div className="glass-panel rounded-2xl border border-white/5 p-4">
-      <p className="text-[10px] uppercase tracking-[0.2em] text-slate-500 flex items-center gap-1">
-        <Settings2 size={14} /> Zigbee Mesh
-      </p>
-      <p className="text-2xl font-semibold text-emerald-300">Online</p>
-      <p className="text-xs text-slate-400">26 подключений</p>
-    </div>
   </div>
 );
 

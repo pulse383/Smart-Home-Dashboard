@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import type { ThermostatData, ZoneData, WeatherData, DeviceData, HomeAssistantState, AirQuality, Occupant } from '../types/index';
 import { getHomeAssistantStates, getAirQuality, getOccupants, getAllEntityIds } from '../lib/homeAssistant';
 

@@ -1,73 +1,57 @@
-# React + TypeScript + Vite
+# Smart Home Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Панель управления умным домом с интеграцией Home Assistant.
 
-Currently, two official plugins are available:
+## Возможности
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Обзор** - главный экран с устройствами и климатом
+- **Комнаты** - управление устройствами по зонам
+- **Сцены** - быстрые пресеты для дома
+- **Энергия** - мониторинг потребления
+- **Безопасность** - статус охраны
+- **Сенсоры** - обзор всех датчиков Home Assistant
+- **Настройки** - системная информация
 
-## React Compiler
+## Технологии
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React 18 + TypeScript
+- Vite
+- Tailwind CSS
+- Framer Motion
+- Lucide Icons
 
-## Expanding the ESLint configuration
+## Установка
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Запуск
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+```bash
+npm run dev
+```
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Сборка
+
+```bash
+npm run build
+```
+
+## Структура
+
+```
+src/
+├── components/
+│   ├── Dashboard.tsx       # Главный дашборд
+│   ├── TopBar.tsx          # Верхняя панель навигации
+│   ├── ZoneGlassCard.tsx   # Карточка зоны
+│   └── HomeAssistantData.tsx # Хук для данных
+├── data/
+│   └── ru_mockData.ts      # Русские данные
+├── lib/
+│   ├── utils.ts            # Утилиты
+│   └── homeAssistant.ts    # API Home Assistant
+└── types/
+    └── index.ts            # TypeScript типы
 ```
